@@ -1,0 +1,60 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test input of full names
+      id: test-input-of-full-names
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test input of full names
+        setup-command: ''
+        command: make test-full-names
+        timeout: 10
+        max-score: 2
+    - name: Test names with no generation
+      id: test-names-with-no-generation
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test names with no generation
+        setup-command: ''
+        command: make test-titles-no-generation
+        timeout: 10
+        max-score: 2
+    - name: Test names with the same title
+      id: test-names-with-the-same-title
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test names with the same title
+        setup-command: ''
+        command: make test-same-title
+        timeout: 10
+        max-score: 2
+    - name: Test the general case
+      id: test-the-general-case
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test the general case
+        setup-command: ''
+        command: make test-general
+        timeout: 10
+        max-score: 4
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-INPUT-OF-FULL-NAMES_RESULTS: "${{steps.test-input-of-full-names.outputs.result}}"
+        TEST-NAMES-WITH-NO-GENERATION_RESULTS: "${{steps.test-names-with-no-generation.outputs.result}}"
+        TEST-NAMES-WITH-THE-SAME-TITLE_RESULTS: "${{steps.test-names-with-the-same-title.outputs.result}}"
+        TEST-THE-GENERAL-CASE_RESULTS: "${{steps.test-the-general-case.outputs.result}}"
+      with:
+        runners: test-input-of-full-names,test-names-with-no-generation,test-names-with-the-same-title,test-the-general-case
