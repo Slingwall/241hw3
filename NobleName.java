@@ -10,8 +10,7 @@ public class NobleName {
      * Create a noble name object from the full name string
      */
     public NobleName(String fullName) {
-        // is this test working?
-        // yeah bro it kinda worked
+        // totally new operation
     }
 
     /**
